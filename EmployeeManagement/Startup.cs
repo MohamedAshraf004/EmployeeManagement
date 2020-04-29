@@ -51,7 +51,8 @@ namespace EmployeeManagement
             services.Configure<CustomEmailConfirmationTokenProviderOptions>(o =>
                         o.TokenLifespan = TimeSpan.FromDays(3));
 
-            //services.addControllerWithViews(); 3.0 services.AddRazorPages();
+            //services.addControllerWithViews(o=>o.Filters.Add(new AuthorizeFilter())); 3.0 services.AddRazorPages();/
+            //services.AddAuthentication(CookieAuthenticationDefaults)
             services.AddMvc(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -63,8 +64,8 @@ namespace EmployeeManagement
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
-                    options.ClientId = "113212281293-q6ouo7vqbn04ggpcv2vshr2l3flitc7f.apps.googleusercontent.com";
-                    options.ClientSecret = "WZESib0c96JCXEsmtltRyNmx";
+                    options.ClientId = "803402001432-f008lgc3l61aga7socd4a5akrfm3irk5.apps.googleusercontent.com";/*_config["Google:ClientID"] */
+                    options.ClientSecret = "exiXHhWW2rPRXoFAHgC88jil"; /*_config["Google:ClientSecret"]; */
                 })
                 .AddFacebook(options =>
                 {
@@ -84,7 +85,7 @@ namespace EmployeeManagement
 
                 options.AddPolicy("EditRolePolicy",
                     policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
-                //options.InvokeHandlersAfterFailure = false;
+                //options.InvokeHandlersAfterFailure = false; default true
                 options.AddPolicy("AdminRolePolicy",
                     policy => policy.RequireRole("Admin"));
             });
