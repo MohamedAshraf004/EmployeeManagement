@@ -38,12 +38,12 @@ namespace EmployeeManagement.Controllers
         [AllowAnonymous]
         public ViewResult Index()
         {
-            var model = _employeeRepository.GetAllEmployee()
-                            .Select(e =>
-                            {
-                                e.EncryptedId = protector.Protect(e.Id.ToString());
-                                return e;
-                            });
+            var model = _employeeRepository.GetAllEmployee();
+                            //.Select(e =>
+                            //{
+                            //    e.EncryptedId = protector.Protect(e.Id.ToString());
+                            //    return e;
+                            //});
             return View(model);
         }
 
@@ -69,7 +69,7 @@ namespace EmployeeManagement.Controllers
             return RedirectToAction(nameof(Index));
         }
         [AllowAnonymous]
-        public ViewResult Details(string id)
+        public ViewResult Details(int id)
         {
             //throw new Exception("Error in Details View");
 
@@ -80,14 +80,14 @@ namespace EmployeeManagement.Controllers
             //logger.LogError("Error Log");
             //logger.LogCritical("Critical Log");
 
-            int employeeId = Convert.ToInt32(protector.Unprotect(id));
+            //int employeeId = Convert.ToInt32(protector.Unprotect(id));
 
-            Employee employee = _employeeRepository.GetEmployee(employeeId);
+            Employee employee = _employeeRepository.GetEmployee(id);
 
             if (employee == null)
             {
                 Response.StatusCode = 404;
-                return View("EmployeeNotFound", employeeId);
+                return View("EmployeeNotFound", id);
             }
 
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
@@ -173,19 +173,38 @@ namespace EmployeeManagement.Controllers
 
         private string ProcessUploadedFile(EmployeeCreateViewModel model)
         {
-            string uniqueFileName = null;
-            if (model.Photo != null)
-            {
-                string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "images");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    model.Photo.CopyTo(fileStream);
-                }
-            }
+            //string uniqueFileName = null;
+            //if (model.Photo != null)
+            //{
+            //    string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "images");
+            //    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+            //    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+            //    {
+            //        model.Photo.CopyTo(fileStream);
+            //    }
+            //}
+            //return uniqueFileName;
 
-            return uniqueFileName;
+            string path = hostingEnvironment.WebRootPath + "\\images\\Employees\\";
+            string uniqueFileName = Guid.NewGuid().ToString() + model.Photo.FileName;
+            if (model.Photo.Length > 0)
+            {
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                using (FileStream filestream = System.IO.File.Create(path + uniqueFileName))
+                {
+                    model.Photo.CopyTo(filestream);
+                    filestream.Flush();
+                }
+                uniqueFileName = "Employees\\" + uniqueFileName;
+                return uniqueFileName;
+            }
+            return null;
+
         }       
     }
 }

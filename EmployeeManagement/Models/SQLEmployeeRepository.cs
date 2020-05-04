@@ -1,17 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.IO;
 
 namespace EmployeeManagement.Models
 {
     public class SQLEmployeeRepository : IEmployeeRepository
     {
         private readonly AppDbContext context;
+        private readonly IHostingEnvironment hostEnvironment;
         private readonly ILogger<SQLEmployeeRepository> logger;
 
-        public SQLEmployeeRepository(AppDbContext context,
+        public SQLEmployeeRepository(AppDbContext context,IHostingEnvironment hostingEnvironment,
                                     ILogger<SQLEmployeeRepository> logger)
         {
             this.context = context;
+            this.hostEnvironment = hostingEnvironment;
             this.logger = logger;
         }
 
@@ -25,6 +29,12 @@ namespace EmployeeManagement.Models
         public Employee Delete(int id)
         {
             Employee employee = context.Employees.Find(id);
+            if (employee.PhotoPath != null)
+            {
+                string uploadsFolder = Path.Combine(hostEnvironment.WebRootPath, "images");
+                string filePath = Path.Combine(uploadsFolder, employee.PhotoPath);
+                File.Delete(filePath);
+            }
             if (employee != null)
             {
                 context.Employees.Remove(employee);

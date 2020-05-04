@@ -117,7 +117,7 @@ namespace EmployeeManagement.Controllers
                 {
                     ClaimType = claim.Type
                 };
-
+                
                 // If the user has the claim, set IsSelected property to true, so the checkbox
                 // next to the claim is checked on the UI
                 if (existingUserClaims.Any(c => c.Type == claim.Type && c.Value == "true"))
@@ -224,7 +224,7 @@ namespace EmployeeManagement.Controllers
             }
 
             result = await userManager.AddToRolesAsync(user,
-        model.Where(x => x.IsSelected).Select(y => y.RoleName));
+                    model.Where(x => x.IsSelected).Select(y => y.RoleName));
 
             if (!result.Succeeded)
             {

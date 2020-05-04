@@ -15,7 +15,7 @@ namespace EmployeeManagement
 {
     public class Startup
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
 
         public Startup(IConfiguration config)
         {
@@ -38,7 +38,7 @@ namespace EmployeeManagement
                 options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
 
                 options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders()
