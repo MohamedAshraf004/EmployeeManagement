@@ -69,6 +69,7 @@ namespace EmployeeManagement.Controllers
             return RedirectToAction(nameof(Index));
         }
         [AllowAnonymous]
+        [HttpGet("GetName/{id}")]
         public ViewResult Details(int id)
         {
             //throw new Exception("Error in Details View");
