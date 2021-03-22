@@ -404,7 +404,7 @@ namespace EmployeeManagement.Controllers
                     return View("Login", loginViewModel);
                 }
             }
-
+            // Check if it log in before then give him the access
             var signInResult = await signInManager.ExternalLoginSignInAsync(
                                         info.LoginProvider, info.ProviderKey,
                                         isPersistent: false, bypassTwoFactor: true);
