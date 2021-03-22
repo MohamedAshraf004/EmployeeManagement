@@ -26,7 +26,8 @@ namespace EmployeeManagement
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<AppDbContext>(
-                options => options.UseSqlServer(_config.GetConnectionString("EmployeeDBConnection")));
+                options => 
+                options.UseSqlServer(_config.GetConnectionString("EmployeeDBConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -88,8 +89,17 @@ namespace EmployeeManagement
                 //options.InvokeHandlersAfterFailure = false; default true
                 options.AddPolicy("AdminRolePolicy",
                     policy => policy.RequireRole("Admin"));
+                options.AddPolicy("Edit",policy=>
+                {
+                    policy.RequireAssertion(context =>
+                        context.User.IsInRole("Admin") &&
+                        context.User.HasClaim(claim => claim.Type == "Edit" && claim.Value == "true")
+                        ||
+                        context.User.IsInRole("SuperAdmin")
+                    );
+                });
             });
-
+            
 
             ////AntiforgeryToken
             ////specify options for the anti forgery here
